@@ -1,6 +1,5 @@
 const admin = require('firebase-admin');
 
-// 1. Securely load your Firebase credentials from Vercel
 if (!admin.apps.length) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS);
   admin.initializeApp({
@@ -9,7 +8,6 @@ if (!admin.apps.length) {
 }
 
 export default async function handler(req, res) {
-  // 2. Allow your EMR app to talk to this function (CORS)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -17,13 +15,17 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { token, title, body } = req.body;
+  const { token, title, body, click_action } = req.body;
 
-  // 3. Send the notification via Firebase V1 API
   try {
+    // Send as custom DATA instead of standard notification to trigger sw.js overrides
     const response = await admin.messaging().send({
       token: token,
-      notification: { title, body }
+      data: {
+        title: title,
+        body: body,
+        click_action: click_action || ''
+      }
     });
     res.status(200).json({ success: true, response });
   } catch (error) {

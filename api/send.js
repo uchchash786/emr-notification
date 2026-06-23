@@ -18,7 +18,6 @@ export default async function handler(req, res) {
   const { token, title, body, click_action } = req.body;
 
   try {
-    // Send as custom DATA instead of standard notification to trigger sw.js overrides
     const response = await admin.messaging().send({
       token: token,
       data: {

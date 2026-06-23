@@ -1,0 +1,6 @@
+{
+  "name": "emr-push-notifications",
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}
